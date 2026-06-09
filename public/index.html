@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>CET-6 突击站</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div id="app">
+    <!-- Auth Screen -->
+    <div id="auth-screen" class="screen hidden">
+      <div class="auth-container">
+        <div class="auth-logo">
+          <div class="logo-symbol">▶ CET-6</div>
+          <p class="tagline">打字翻译 · 极速过级</p>
+        </div>
+        <div class="auth-form">
+          <input type="text" id="auth-username" placeholder="用户名" autocomplete="off" autofocus>
+          <input type="password" id="auth-password" placeholder="密码" autocomplete="off">
+          <div class="auth-actions">
+            <button id="btn-login" class="btn primary">登录</button>
+            <button id="btn-register" class="btn secondary">注册</button>
+          </div>
+          <div id="auth-error" class="auth-error hidden"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main App -->
+    <div id="main-screen" class="screen hidden">
+      <!-- Top Bar -->
+      <header id="topbar">
+        <span class="logo-small">CET-6 突击站</span>
+        <span class="topbar-center" id="progress-text">加载中...</span>
+        <div class="topbar-right">
+          <span id="streak-display" class="hidden" style="font-size:0.85rem;color:var(--orange)">🔥 0</span>
+          <button id="btn-logout" class="btn ghost small" title="退出">退出</button>
+        </div>
+      </header>
+
+      <!-- View Container -->
+      <main id="view-container">
+        <!-- Dashboard View -->
+        <div id="view-dashboard" class="view hidden">
+          <div class="dashboard-grid">
+            <div class="stat-card" id="stat-learned">
+              <div class="stat-number">0</div>
+              <div class="stat-label">已学习</div>
+            </div>
+            <div class="stat-card" id="stat-mastered">
+              <div class="stat-number">0</div>
+              <div class="stat-label">已掌握</div>
+            </div>
+            <div class="stat-card" id="stat-today">
+              <div class="stat-number">0</div>
+              <div class="stat-label">今日复习</div>
+            </div>
+            <div class="stat-card" id="stat-accuracy">
+              <div class="stat-number">0%</div>
+              <div class="stat-label">正确率</div>
+            </div>
+          </div>
+
+          <div class="session-section">
+            <div class="mode-selector">
+              <div class="mode-card" data-mode="en2cn">
+                <div class="mode-icon">EN → 中</div>
+                <div class="mode-desc">看英文打中文</div>
+                <div class="mode-count" id="count-en2cn">200+ 词</div>
+              </div>
+              <div class="mode-card" data-mode="cn2en">
+                <div class="mode-icon">中 → EN</div>
+                <div class="mode-desc">看中文打英文</div>
+                <div class="mode-count" id="count-cn2en">200+ 词</div>
+              </div>
+              <div class="mode-card" data-mode="sentence">
+                <div class="mode-icon">📝 句子</div>
+                <div class="mode-desc">翻译整个句子</div>
+                <div class="mode-count" id="count-sentence">200+ 句</div>
+              </div>
+              <div class="mode-card" data-mode="passage">
+                <div class="mode-icon">📖 段落</div>
+                <div class="mode-desc">翻译完整段落</div>
+                <div class="mode-count" id="count-passage">30 段</div>
+              </div>
+              <div class="mode-card" data-mode="mistakes">
+                <div class="mode-icon">🎯 错词</div>
+                <div class="mode-desc">专攻易错词</div>
+                <div class="mode-count" id="count-mistakes">0 个</div>
+              </div>
+            </div>
+            <button id="btn-start-test" class="btn primary large start-btn">开始 ▸</button>
+          </div>
+
+          <div class="dashboard-bottom">
+            <div id="wrong-word-list" class="panel hidden">
+              <div class="panel-title">🔴 高频错词</div>
+              <div class="wrong-list" id="wrong-list-container"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Test View -->
+        <div id="view-test" class="view hidden">
+          <div class="test-header">
+            <div class="test-meta">
+              <span class="test-progress-text" id="test-count">0/0</span>
+              <span class="test-streak" id="test-streak">🔥 0</span>
+            </div>
+            <div class="test-progress-bar">
+              <div class="test-progress-fill" id="test-progress-fill"></div>
+            </div>
+          </div>
+
+          <div class="test-area">
+            <div class="test-mode-label" id="test-mode-label">EN → 中文</div>
+            <div class="test-question" id="test-question">word</div>
+            <div class="test-phonetic" id="test-phonetic">/fəˈnɛtɪk/</div>
+            <div class="test-sentence" id="test-sentence">Example sentence with the word in context.</div>
+
+            <div class="test-input-area">
+              <input type="text" id="test-input" placeholder="在此输入翻译..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+              <button id="btn-submit-answer" class="btn primary">↵ 确认</button>
+            </div>
+
+            <div class="test-extra-info" id="test-extra-info">
+              <span>📊 <span id="extra-progress">0/0</span></span>
+              <span>✅ <span id="extra-correct">0</span></span>
+              <span>❌ <span id="extra-wrong">0</span></span>
+            </div>
+
+            <div class="test-hint-area">
+              <button id="btn-hint" class="btn ghost small">💡 提示</button>
+              <div id="hint-content" class="hint-content hidden"></div>
+            </div>
+
+            <div class="test-result-area" id="test-result"></div>
+          </div>
+
+          <div class="test-footer">
+            <span><kbd>Enter</kbd> 确认</span>
+            <span><kbd>H</kbd> 提示</span>
+            <span><kbd>←</kbd><kbd>→</kbd> 切换模式</span>
+          </div>
+        </div>
+
+        <!-- Result Overlay -->
+        <div id="result-overlay" class="result-overlay hidden">
+          <div class="result-card">
+            <div class="result-icon" id="result-icon">✓</div>
+            <div class="result-word" id="result-word">word</div>
+            <div class="result-answer" id="result-answer">翻译</div>
+            <div class="result-detail">
+              <div class="rd-item"><span class="rd-label">词性</span><span id="rd-pos">n.</span></div>
+              <div class="rd-item"><span class="rd-label">音标</span><span id="rd-phonetic">/wɜːd/</span></div>
+              <div class="rd-item"><span class="rd-label">英文释义</span><span id="rd-def">definition</span></div>
+              <div class="rd-item"><span class="rd-label">例句</span><span id="rd-sentence">sentence</span></div>
+            </div>
+            <button id="btn-next" class="btn primary large">下一个 ↵</button>
+          </div>
+        </div>
+
+        <!-- Stats View -->
+        <div id="view-stats" class="view hidden">
+          <div class="stats-header">
+            <div class="stats-title">学习统计</div>
+            <div class="stats-subtitle">坚持就是胜利</div>
+          </div>
+          <div class="stats-grid">
+            <div class="stats-card"><div class="stat-number" id="s-learned">-</div><div class="stat-label">已学习</div></div>
+            <div class="stats-card"><div class="stat-number" id="s-mastered">-</div><div class="stat-label">已掌握</div></div>
+            <div class="stats-card"><div class="stat-number" id="s-total">-</div><div class="stat-label">总词汇</div></div>
+            <div class="stats-card"><div class="stat-number" id="s-today">-</div><div class="stat-label">今日复习</div></div>
+            <div class="stats-card"><div class="stat-number" id="s-due">-</div><div class="stat-label">待复习</div></div>
+            <div class="stats-card"><div class="stat-number" id="s-accuracy">-</div><div class="stat-label">正确率</div></div>
+            <div class="stats-card"><div class="stat-number" id="s-mistakes-count">-</div><div class="stat-label">易错词数</div></div>
+            <div class="stats-card"><div class="stat-number" id="s-streak">-</div><div class="stat-label">最高连续</div></div>
+          </div>
+          <div class="stats-section">
+            <div class="stats-section-title">🔴 错词记录</div>
+            <ul class="stats-mistakes" id="s-mistakes-list"></ul>
+          </div>
+        </div>
+      </main>
+
+      <!-- Bottom Nav -->
+      <nav id="bottom-nav">
+        <button class="nav-item active" data-view="dashboard">📊 看板</button>
+        <button class="nav-item" data-view="test">✍️ 刷词</button>
+        <button class="nav-item" data-view="stats">📈 统计</button>
+      </nav>
+    </div>
+  </div>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>

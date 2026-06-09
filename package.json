@@ -1,0 +1,17 @@
+{
+  "name": "cet6-dash",
+  "version": "1.0.0",
+  "description": "CET-6 单词速记突击工具 — 打字翻译，极速过级",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "seed": "node seed-words.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "sql.js": "^1.11.0",
+    "express": "^4.21.0",
+    "jsonwebtoken": "^9.0.2",
+    "cors": "^2.8.5"
+  }
+}
