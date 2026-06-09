@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken');
 const cors = require('cors');
 const path = require('path');
 const { initDb, getDb, all, get, run } = require('./db');
+const { seedAll } = require('./seed-all');
 
 const app = express();
 const JWT_SECRET = 'cet6-dash-secret-2024';
@@ -359,6 +360,7 @@ app.get('*', (req, res) => {
 // --- Start ---
 async function start() {
   await initDb();
+  await seedAll();
   app.listen(PORT, '0.0.0.0', () => {
     console.log('🚀 CET-6 突击站已启动 → http://localhost:' + PORT);
   });

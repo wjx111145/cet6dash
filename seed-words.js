@@ -251,4 +251,8 @@ async function seed() {
   console.log(`✅ 成功导入 ${words.length} 个 CET-6 词汇！`);
 }
 
-seed().catch(err => { console.error('导入失败:', err); process.exit(1); });
+module.exports = { words };
+
+if (require.main === module) {
+  seed().catch(err => { console.error('导入失败:', err); process.exit(1); });
+}

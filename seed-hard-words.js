@@ -479,4 +479,8 @@ async function seed() {
   console.log(`📚 总词汇数: ${total}`);
 }
 
-seed().catch(e => { console.error('失败:', e); process.exit(1); });
+module.exports = { words: hardWords };
+
+if (require.main === module) {
+  seed().catch(e => { console.error('失败:', e); process.exit(1); });
+}

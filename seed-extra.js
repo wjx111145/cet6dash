@@ -185,4 +185,8 @@ async function seedExtra() {
   console.log('✅ 补充数据完成！总词汇: ' + (existing + addedWords) + '，段落: ' + (existingPassages > 0 ? existingPassages : passages.length));
 }
 
-seedExtra().catch(err => { console.error('失败:', err); process.exit(1); });
+module.exports = { words: extraWords, passages };
+
+if (require.main === module) {
+  seedExtra().catch(err => { console.error('失败:', err); process.exit(1); });
+}
