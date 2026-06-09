@@ -74,6 +74,18 @@ app.get('/api/words/challenge', auth, (req, res) => {
   const { count = 30, mode = 'en2cn' } = req.query;
   const n = parseInt(count);
 
+  // 错词模式：直接从 mistakes 表读取
+  if (mode === 'mistakes') {
+    const mistakeWords = all(`
+      SELECT DISTINCT w.*, COALESCE(p.correct_count,0) as correct_count,
+             COALESCE(p.wrong_count,0) as wrong_count, COALESCE(p.streak,0) as streak
+      FROM words w
+      JOIN mistakes m ON w.id = m.word_id AND m.user_id = ?
+      LEFT JOIN progress p ON w.id = p.word_id AND p.user_id = ?
+      ORDER BY m.created_at DESC LIMIT ?`, [userId, userId, n]);
+    return res.json(mistakeWords);
+  }
+
   // Due review (get up to n each, deduped below)
   const dueWords = all(`
     SELECT w.*, COALESCE(p.correct_count,0) as correct_count,
