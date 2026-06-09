@@ -3,6 +3,7 @@ name: Deploy to Railway
 on:
   push:
     branches: [master]
+  workflow_dispatch:
 
 jobs:
   deploy:
@@ -20,7 +21,6 @@ jobs:
         run: npm install
 
       - name: Deploy to Railway
-        uses: bervproject/railway-deploy@v1
+        uses: railway-ai/action-deploy@v1
         with:
           railway_token: ${{ secrets.RAILWAY_TOKEN }}
-          service: cet6dash
