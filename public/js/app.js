@@ -156,6 +156,10 @@
         if (D['test-result']) { D['test-result'].textContent = '⚠️ 没有句子可测'; D['test-result'].className = 'test-result-area'; }
         return;
       }
+      // 每个句子随机分配方向：英→中 或 中→英
+      sentences.forEach(function(s) {
+        s.sentenceDir = Math.random() < 0.5 ? 'en2cn' : 'cn2en';
+      });
       state.words = sentences; state.passages = [];
       startSession(sentences.length);
       setTestQuestion();
@@ -194,17 +198,32 @@
     state.answered = false; state.hintLevel = 0;
     hide(D['hint-content']);
 
+    // 单词模式不换行，句子/段落换行
+    if (D['test-question']) {
+      if (mode === 'en2cn' || mode === 'cn2en' || mode === 'mistakes') {
+        D['test-question'].classList.add('nowrap');
+        D['test-question'].style.fontSize = '';
+      } else {
+        D['test-question'].classList.remove('nowrap');
+      }
+    }
+
     // Reset UI elements
     if (D['test-phonetic']) D['test-phonetic'].style.display = '';
     if (D['test-sentence']) D['test-sentence'].style.display = '';
     if (D['btn-hint']) show(D['btn-hint']);
 
     if (mode === 'sentence' && word) {
-      if (D['test-mode-label']) D['test-mode-label'].textContent = '📝 句子翻译';
-      if (D['test-question']) D['test-question'].textContent = word.sentence_en || word.word;
-      if (D['test-phonetic']) { D['test-phonetic'].textContent = '包含: ' + word.word + ' (' + (word.definition_cn || '') + ')'; }
+      var sDir = word.sentenceDir || 'en2cn';
+      if (D['test-mode-label']) D['test-mode-label'].textContent = sDir === 'en2cn' ? '📝 英→中 句子' : '📝 中→英 句子';
+      if (D['test-question']) D['test-question'].textContent = sDir === 'en2cn' ? (word.sentence_en || word.word) : (word.sentence_cn || word.definition_cn);
+      if (D['test-phonetic']) {
+        D['test-phonetic'].textContent = sDir === 'en2cn'
+          ? ('包含单词: ' + word.word)
+          : ('参考单词: ' + word.word + ' (' + (word.definition_cn || '') + ')');
+      }
       if (D['test-sentence']) D['test-sentence'].style.display = 'none';
-      if (D['test-input']) D['test-input'].placeholder = '翻译上面的句子...';
+      if (D['test-input']) D['test-input'].placeholder = sDir === 'en2cn' ? '翻译成中文...' : 'Translate into English...';
     } else if (mode === 'passage' && passage) {
       if (D['test-mode-label']) D['test-mode-label'].textContent = '📖 段落翻译';
       if (D['test-question']) D['test-question'].textContent = passage.title || '段落' + (state.currentIndex + 1);
@@ -298,7 +317,8 @@
         if (D['test-result']) { D['test-result'].textContent = '⚠️ ' + e.message; D['test-result'].className = 'test-result-area'; }
       });
     } else if (word) {
-      api.submitAnswer(word.id, answer, state.mode).then(function(result) {
+      var answerMode = state.mode === 'sentence' && word.sentenceDir ? word.sentenceDir : state.mode;
+      api.submitAnswer(word.id, answer, answerMode).then(function(result) {
         if (result.isCorrect) { state.correctCount++; state.correctStreak++; }
         else { state.wrongCount++; state.correctStreak = 0; }
         if (D['test-result']) {

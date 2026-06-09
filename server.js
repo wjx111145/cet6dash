@@ -259,13 +259,28 @@ app.post('/api/words/answer', auth, (req, res) => {
     });
   } else if (mode === 'cn2en') {
     correctAnswer = word.word;
-    const normalizedAnswer = answer.trim().toLowerCase().replace(/[^a-z]/g, '');
-    const target = word.word.toLowerCase().replace(/[^a-z]/g, '');
-    isCorrect = normalizedAnswer === target;
-    if (!isCorrect && answer.length > 2) {
-      if (Math.abs(target.length - normalizedAnswer.length) <= 1) {
-        const sameChars = [...normalizedAnswer].filter(c => target.includes(c)).length;
-        partial = sameChars / target.length >= 0.7;
+    // 句子中译英模式
+    if (word.sentence_en && answer.length > 10) {
+      correctAnswer = word.sentence_en || word.word;
+      const ref = (word.sentence_en || '').toLowerCase().replace(/[^a-z\s]/g, '').trim();
+      const userAns = answer.trim().toLowerCase().replace(/[^a-z\s]/g, '').trim();
+      // 关键词检查：看目标单词是否出现 + 长度比
+      const hasKeyWord = userAns.includes(word.word.toLowerCase().slice(0, 4));
+      const wordMatches = (userAns.match(/\S+/g) || []).length;
+      const refWords = (ref.match(/\S+/g) || []).length;
+      const lenRatio = refWords > 0 ? Math.min(wordMatches, refWords) / Math.max(wordMatches, refWords, 1) : 0;
+      isCorrect = hasKeyWord && lenRatio >= 0.4;
+      partial = !isCorrect && (hasKeyWord || lenRatio >= 0.5);
+    } else {
+      // 单词中译英
+      const normalizedAnswer = answer.trim().toLowerCase().replace(/[^a-z]/g, '');
+      const target = word.word.toLowerCase().replace(/[^a-z]/g, '');
+      isCorrect = normalizedAnswer === target;
+      if (!isCorrect && answer.length > 2) {
+        if (Math.abs(target.length - normalizedAnswer.length) <= 1) {
+          const sameChars = [...normalizedAnswer].filter(c => target.includes(c)).length;
+          partial = sameChars / target.length >= 0.7;
+        }
       }
     }
   }
