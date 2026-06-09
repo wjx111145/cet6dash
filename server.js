@@ -71,17 +71,17 @@ app.get('/api/auth/me', auth, (req, res) => {
 // --- Word challenge ---
 app.get('/api/words/challenge', auth, (req, res) => {
   const userId = req.user.id;
-  const { count = 20, mode = 'en2cn' } = req.query;
+  const { count = 30, mode = 'en2cn' } = req.query;
   const n = parseInt(count);
 
-  // Due review
+  // Due review (get up to n each, deduped below)
   const dueWords = all(`
     SELECT w.*, COALESCE(p.correct_count,0) as correct_count,
            COALESCE(p.wrong_count,0) as wrong_count, COALESCE(p.streak,0) as streak
     FROM words w
     LEFT JOIN progress p ON w.id = p.word_id AND p.user_id = ?
     WHERE p.word_id IS NOT NULL AND p.next_review <= datetime('now','localtime')
-    ORDER BY p.next_review ASC LIMIT ?`, [userId, Math.ceil(n * 0.4)]);
+    ORDER BY p.next_review ASC LIMIT ?`, [userId, n]);
 
   // New words
   const newWords = all(`
@@ -89,7 +89,7 @@ app.get('/api/words/challenge', auth, (req, res) => {
     FROM words w
     LEFT JOIN progress p ON w.id = p.word_id AND p.user_id = ?
     WHERE p.word_id IS NULL
-    ORDER BY w.frequency DESC, RANDOM() LIMIT ?`, [userId, Math.ceil(n * 0.4)]);
+    ORDER BY w.frequency DESC, RANDOM() LIMIT ?`, [userId, n]);
 
   // Weak words
   const weakWords = all(`
@@ -99,7 +99,7 @@ app.get('/api/words/challenge', auth, (req, res) => {
     JOIN progress p ON w.id = p.word_id AND p.user_id = ?
     WHERE p.wrong_count > p.correct_count
       AND p.next_review > datetime('now','localtime')
-    ORDER BY (p.wrong_count - p.correct_count) DESC, RANDOM() LIMIT ?`, [userId, Math.ceil(n * 0.2)]);
+    ORDER BY (p.wrong_count - p.correct_count) DESC, RANDOM() LIMIT ?`, [userId, n]);
 
   const seen = new Set();
   const combined = [...dueWords, ...newWords, ...weakWords].filter(w => {

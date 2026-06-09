@@ -136,7 +136,7 @@
   }
 
   function loadWordChallenge() {
-    api.getChallenge(30, state.mode).then(function(words) {
+    api.getChallenge(60, state.mode).then(function(words) {
       if (!words || words.length === 0) {
         if (D['test-result']) { D['test-result'].textContent = '⚠️ 没有单词可测'; D['test-result'].className = 'test-result-area'; }
         return;
