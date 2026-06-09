@@ -21,6 +21,6 @@ jobs:
         run: npm install -g @railway/cli
 
       - name: Deploy to Railway
-        run: railway up --detach --service cet6dash
+        run: railway up --detach
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY }}
