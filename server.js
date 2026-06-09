@@ -149,33 +149,37 @@ app.get('/api/passages/challenge', auth, (req, res) => {
 
 app.post('/api/passages/answer', auth, (req, res) => {
   const userId = req.user.id;
-  const { passage_id, answer } = req.body;
+  const { passage_id, answer, direction } = req.body;
+  const isEn2Cn = direction !== 'cn2en';
 
   const passage = get('SELECT * FROM passages WHERE id = ?', [passage_id]);
   if (!passage) return res.status(404).json({ error: '段落不存在' });
 
-  // word_ids stores comma-separated word TEXT (English words)
-  const wordTexts = (passage.word_ids || '').split(',').map(s => s.trim()).filter(Boolean);
-  const placeholders = wordTexts.map(() => '?').join(',');
-  const keyWords = wordTexts.length > 0
-    ? all(`SELECT id, word, definition_cn FROM words WHERE word IN (${placeholders})`, wordTexts)
+  const userAnswer = answer.trim();
+  const reference = isEn2Cn ? passage.passage_cn : passage.passage_en;
+
+  const wordTexts = (passage.word_ids || '').split(',').map(function(s) { return s.trim(); }).filter(Boolean);
+  var placeholders = wordTexts.map(function() { return '?'; }).join(',');
+  var keyWords = wordTexts.length > 0
+    ? all('SELECT id, word, definition_cn FROM words WHERE word IN (' + placeholders + ')', wordTexts)
     : [];
 
-  const userAnswer = answer.trim();
-  const referenceCn = passage.passage_cn;
+  var keywordsFound = 0;
+  if (isEn2Cn) {
+    keywordsFound = keyWords.filter(function(kw) {
+      var parts = kw.definition_cn.split(/[，,、；;：:]/).map(function(s) { return s.replace(/[。！？\s]/g,'').trim(); }).filter(Boolean);
+      return parts.some(function(p) { return p.length > 1 && userAnswer.includes(p.slice(0, Math.min(2, p.length))); });
+    }).length;
+  } else {
+    keywordsFound = keyWords.filter(function(kw) {
+      var w = kw.word.toLowerCase();
+      return userAnswer.toLowerCase().includes(w.slice(0, Math.min(4, w.length)));
+    }).length;
+  }
 
-  // Score: keyword coverage + length ratio
-  const keywordsFound = keyWords.filter(kw => {
-    // Check all comma/semicolon separated possible translations
-    const parts = kw.definition_cn.split(/[，,、；;：:]/).map(s => s.replace(/[。！？\s]/g,'').trim()).filter(Boolean);
-    return parts.some(p => {
-      if (p.length <= 1) return false;
-      return userAnswer.includes(p.slice(0, Math.min(2, p.length)));
-    });
-  }).length;
-  const keywordScore = keyWords.length > 0 ? keywordsFound / keyWords.length : 0;
-  const lenRatio = Math.min(userAnswer.length, referenceCn.length) / Math.max(userAnswer.length, referenceCn.length, 1);
-  const score = Math.round((keywordScore * 0.6 + lenRatio * 0.4) * 100);
+  var keywordScore = keyWords.length > 0 ? keywordsFound / keyWords.length : 0;
+  var lenRatio = Math.min(userAnswer.length, reference.length) / Math.max(userAnswer.length, reference.length, 1);
+  var score = Math.round((keywordScore * 0.6 + lenRatio * 0.4) * 100);
 
   // Save progress
   const n = now();
@@ -193,14 +197,19 @@ app.post('/api/passages/answer', auth, (req, res) => {
   }
 
   // Record mistakes
-  keyWords.filter(kw => !userAnswer.includes(kw.definition_cn.slice(0, 2))).forEach(kw => {
-    run('INSERT INTO mistakes (user_id, word_id, wrong_answer, mode) VALUES (?, ?, ?, ?)',
-      [userId, kw.id, '', 'passage']);
-  });
+  if (isEn2Cn) {
+    keyWords.filter(function(kw) {
+      var parts = kw.definition_cn.split(/[，,、；;：:]/).map(function(s) { return s.replace(/[。！？\s]/g,'').trim(); }).filter(Boolean);
+      return !parts.some(function(p) { return p.length > 1 && userAnswer.includes(p.slice(0, 2)); });
+    }).forEach(function(kw) {
+      run('INSERT INTO mistakes (user_id, word_id, wrong_answer, mode) VALUES (?, ?, ?, ?)',
+        [userId, kw.id, '', 'passage']);
+    });
+  }
 
   res.json({
     score,
-    reference: referenceCn,
+    reference: reference,
     keywordsFound,
     totalKeywords: keyWords.length,
     keyWords: keyWords.map(k => ({ word: k.word, definition: k.definition_cn })),

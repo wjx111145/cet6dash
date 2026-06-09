@@ -152,6 +152,98 @@ const passages = [
     words: 'global,diverse,contemporary,trend,embrace,unique',
     difficulty: 2
   },
+  // ── 新增段落 ──
+  {
+    title: '科技对就业的影响',
+    passage_en: 'The rapid advancement of technology has fundamentally transformed the labor market. While automation has eliminated certain routine jobs, it has also created new opportunities in emerging fields such as artificial intelligence and data analysis. The key challenge for workers is to continuously upgrade their skills to remain competitive in this evolving landscape.',
+    passage_cn: '技术的快速发展从根本上改变了劳动力市场。虽然自动化消除了某些常规工作，但它也在人工智能和数据分析等新兴领域创造了新的机会。工人们面临的关键挑战是持续提升技能以在这个不断变化的环境中保持竞争力。',
+    words: 'fundamental,transform,eliminate,emerge,artificial,challenge,evaluate,evolve',
+    difficulty: 2
+  },
+  {
+    title: '环境保护与经济发展',
+    passage_en: 'The conflict between environmental protection and economic development has been a persistent topic of debate. Critics argue that environmental regulations impose excessive burdens on businesses and hinder economic growth. However, advocates of sustainable development contend that green technologies can actually stimulate innovation and create new job opportunities.',
+    passage_cn: '环境保护与经济发展之间的冲突一直是一个争论不休的话题。批评者认为环境法规给企业带来了过重负担，阻碍了经济增长。然而，可持续发展的倡导者认为绿色技术实际上可以刺激创新并创造新的就业机会。',
+    words: 'conflict,persistent,impose,advocate,sustainable,stimulate,innovation,opportunity',
+    difficulty: 3
+  },
+  {
+    title: '网络安全挑战',
+    passage_en: 'As our reliance on digital infrastructure grows, cybersecurity has become a critical concern for both governments and corporations. Cyber attacks have become increasingly sophisticated, threatening not only personal privacy but also national security. Experts emphasize that addressing these threats requires international cooperation and constant vigilance.',
+    passage_cn: '随着我们对数字基础设施依赖的增加，网络安全已成为政府和企业的重要关切。网络攻击变得越来越复杂，不仅威胁到个人隐私，还威胁到国家安全。专家强调，应对这些威胁需要国际合作和持续警惕。',
+    words: 'reliance,critical,threaten,privacy,security,emphasize,cooperate',
+    difficulty: 2
+  },
+  {
+    title: '大学教育的目的',
+    passage_en: 'The purpose of university education has been the subject of intense debate in recent years. While some argue that its primary function is to prepare students for the job market, others contend that higher education should cultivate critical thinking and broaden intellectual horizons. The ideal approach may be to integrate both practical skills and liberal arts education.',
+    passage_cn: '大学教育的目的近年来一直是激烈争论的话题。有人认为其主要功能是为学生就业做准备，而另一些人则主张高等教育应培养批判性思维并拓宽知识视野。理想的方法可能是将实用技能与通识教育相结合。',
+    words: 'intense,debate,primary,function,cultivate,integrate,approach',
+    difficulty: 3
+  },
+  {
+    title: '消费主义与社会',
+    passage_en: 'Consumerism has become a dominant force in modern society, shaping not only economic patterns but also cultural values and personal identities. Critics contend that excessive consumption is both environmentally unsustainable and psychologically detrimental, fostering a culture of materialism that undermines genuine human well-being.',
+    passage_cn: '消费主义已成为现代社会的主导力量，不仅塑造了经济模式，还影响了文化价值观和个人身份认同。批评者认为过度消费在环境上不可持续，在心理上也有害，助长了物质主义文化，削弱了真正的人类福祉。',
+    words: 'dominant,cultural,identity,excessive,sustainable,detrimental,genuine',
+    difficulty: 3
+  },
+  {
+    title: '远程工作的兴起',
+    passage_en: 'The pandemic has dramatically accelerated the shift toward remote work, a trend that appears likely to persist. While employees enjoy greater flexibility and work-life balance, managers face challenges in maintaining team cohesion and corporate culture. Organizations must adapt their management practices to this new reality.',
+    passage_cn: '疫情极大地加速了向远程工作的转变，这一趋势似乎很可能会持续下去。虽然员工享有更大的灵活性和工作生活平衡，但管理者在维持团队凝聚力和企业文化方面面临挑战。组织必须调整其管理实践以适应这一新现实。',
+    words: 'dramatic,accelerate,shift,trend,persistent,adapt,maintain',
+    difficulty: 2
+  },
+  {
+    title: '人工智能伦理',
+    passage_en: 'The rapid development of artificial intelligence raises profound ethical questions that society must address. Issues such as algorithmic bias, privacy protection, and the potential displacement of human workers require careful consideration. Policymakers face the challenge of regulating AI technology without stifling innovation.',
+    passage_cn: '人工智能的快速发展提出了社会必须解决的深刻伦理问题。算法偏见、隐私保护和人类劳动者可能被取代等问题需要认真考虑。政策制定者面临着规范人工智能技术而不扼杀创新的挑战。',
+    words: 'artificial,profound,ethical,potential,bias,privacy,regulate,innovation',
+    difficulty: 3
+  },
+  {
+    title: '老龄化社会',
+    passage_en: 'Many developed countries are confronting the challenges of an aging population. The declining birth rate and increasing life expectancy have strained pension systems and healthcare resources. Governments are exploring various strategies, from raising the retirement age to encouraging immigration, in an attempt to mitigate the economic impact.',
+    passage_cn: '许多发达国家正面临人口老龄化的挑战。出生率下降和预期寿命延长给养老金体系和医疗资源带来了压力。各国政府正在探索各种策略，从提高退休年龄到鼓励移民，试图减轻经济影响。',
+    words: 'confront,decline,increase,strain,resource,strategy,attempt,mitigate',
+    difficulty: 3
+  },
+  {
+    title: '社交媒体与心理健康',
+    passage_en: 'The relationship between social media usage and mental health has attracted significant research attention. Studies have found a correlation between excessive social media consumption and increased rates of anxiety and depression among young people. However, researchers caution that the relationship is complex, and social media can also provide valuable social support.',
+    passage_cn: '社交媒体使用与心理健康之间的关系吸引了大量的研究关注。研究发现过度使用社交媒体与年轻人焦虑和抑郁率上升之间存在关联。然而，研究人员提醒说，这种关系是复杂的，社交媒体也可以提供宝贵的社交支持。',
+    words: 'significant,research,correlation,excessive,anxiety,depression,cautious,complex',
+    difficulty: 3
+  },
+  {
+    title: '基因编辑技术',
+    passage_en: 'Gene editing technology, particularly CRISPR, has revolutionized biomedical research and opened up unprecedented possibilities for treating genetic diseases. Nevertheless, the technology raises profound ethical concerns about the potential for creating genetically modified humans. Scientists and policymakers must collaborate to establish appropriate guidelines.',
+    passage_cn: '基因编辑技术，特别是CRISPR，彻底改变了生物医学研究，为治疗遗传疾病开辟了前所未有的可能性。然而，这项技术引发了关于创造转基因人类可能性的深刻伦理关切。科学家和政策制定者必须合作制定适当的指导方针。',
+    words: 'technology,unprecedented,treat,nevertheless,ethical,potential,appropriate,collaborate',
+    difficulty: 4
+  },
+  {
+    title: '城市交通拥堵',
+    passage_en: 'Traffic congestion has become a severe problem in major cities worldwide, leading to lost productivity and environmental pollution. Many cities have implemented measures such as congestion pricing, improved public transit, and cycling infrastructure to alleviate the problem. However, the fundamental solution lies in comprehensive urban planning.',
+    passage_cn: '交通拥堵已成为全球主要城市的严重问题，导致生产力损失和环境污染。许多城市已经实施了拥堵收费、改善公共交通和自行车基础设施等措施来缓解问题。然而，根本的解决方案在于全面的城市规划。',
+    words: 'severe,implement,measure,infrastructure,alleviate,fundamental,comprehensive,urban',
+    difficulty: 2
+  },
+  {
+    title: '太空探索的意义',
+    passage_en: 'Space exploration continues to capture human imagination and drive technological innovation. Proponents argue that the benefits of space research extend far beyond scientific knowledge, producing practical applications that improve daily life. Critics, however, contend that the enormous cost could be better spent on addressing terrestrial problems.',
+    passage_cn: '太空探索继续激发人类的想象力并推动技术创新。支持者认为太空研究的益处远远超出科学知识本身，还能产生改善日常生活的实际应用。然而，批评者认为巨额资金本可以更好地用于解决地球上的问题。',
+    words: 'exploration,capture,innovation,benefit,extend,application,enormous,contend',
+    difficulty: 3
+  },
+  {
+    title: '大数据与隐私',
+    passage_en: 'The era of big data has brought remarkable advances in fields ranging from healthcare to marketing. The ability to analyze vast amounts of information enables more personalized services and better decision-making. Yet the collection and utilization of personal data raise serious concerns about privacy and the potential for abuse.',
+    passage_cn: '大数据时代给从医疗到营销等领域带来了显著的进步。分析海量信息的能力使得更加个性化的服务和更好的决策成为可能。然而，个人数据的收集和利用引发了关于隐私和滥用可能性的严重关切。',
+    words: 'remarkable,range,enable,analyze,potential,concern,privacy,abuse',
+    difficulty: 2
+  },
 ];
 
 async function seedExtra() {

@@ -170,11 +170,12 @@
   }
 
   function loadPassages() {
-    api.get('/passages/challenge?count=5').then(function(passages) {
+    api.get('/passages/challenge?count=10').then(function(passages) {
       if (!passages || passages.length === 0) {
         if (D['test-result']) { D['test-result'].textContent = '⚠️ 没有段落可测'; D['test-result'].className = 'test-result-area'; }
         return;
       }
+      passages.forEach(function(p) { p.passageDir = Math.random() < 0.5 ? 'en2cn' : 'cn2en'; });
       state.passages = passages; state.words = [];
       startSession(passages.length);
       setTestQuestion();
@@ -225,19 +226,20 @@
       if (D['test-sentence']) D['test-sentence'].style.display = 'none';
       if (D['test-input']) D['test-input'].placeholder = sDir === 'en2cn' ? '翻译成中文...' : 'Translate into English...';
     } else if (mode === 'passage' && passage) {
-      if (D['test-mode-label']) D['test-mode-label'].textContent = '📖 段落翻译';
+      var pDir = passage.passageDir || 'en2cn';
+      if (D['test-mode-label']) D['test-mode-label'].textContent = pDir === 'en2cn' ? '📖 英→中 段落' : '📖 中→英 段落';
       if (D['test-question']) D['test-question'].textContent = passage.title || '段落' + (state.currentIndex + 1);
-      if (D['test-question']) D['test-question'].style.fontSize = '1.4rem';
+      if (D['test-question']) D['test-question'].style.fontSize = '1.2rem';
       if (D['test-phonetic']) D['test-phonetic'].style.display = 'none';
       if (D['test-sentence']) {
         D['test-sentence'].style.display = 'block';
-        D['test-sentence'].textContent = passage.passage_en;
+        D['test-sentence'].textContent = pDir === 'en2cn' ? passage.passage_en : passage.passage_cn;
         D['test-sentence'].style.fontStyle = 'normal';
         D['test-sentence'].style.whiteSpace = 'pre-wrap';
-        D['test-sentence'].style.maxHeight = '200px';
+        D['test-sentence'].style.maxHeight = '240px';
         D['test-sentence'].style.overflowY = 'auto';
       }
-      if (D['test-input']) D['test-input'].placeholder = '翻译上面的段落...';
+      if (D['test-input']) D['test-input'].placeholder = pDir === 'en2cn' ? '翻译上面的段落...' : 'Translate the passage into English...';
       hide(D['btn-hint']);
     } else if (word) {
       // Word modes (en2cn, cn2en, mistakes)
@@ -295,7 +297,7 @@
     state.answered = true;
 
     if (state.mode === 'passage' && passage) {
-      api.post('/passages/answer', { passage_id: passage.id, answer: answer }).then(function(result) {
+      api.post('/passages/answer', { passage_id: passage.id, answer: answer, direction: passage.passageDir || 'en2cn' }).then(function(result) {
         var pass = result.score >= 60;
         if (pass) { state.correctCount++; state.correctStreak++; }
         else { state.wrongCount++; state.correctStreak = 0; }
