@@ -74,15 +74,19 @@ app.get('/api/words/challenge', auth, (req, res) => {
   const { count = 30, mode = 'en2cn' } = req.query;
   const n = parseInt(count);
 
-  // 错词模式：直接从 mistakes 表读取
+  // 错词模式：直接从 mistakes 表读取（保留原始答题方向）
   if (mode === 'mistakes') {
     const mistakeWords = all(`
-      SELECT DISTINCT w.*, COALESCE(p.correct_count,0) as correct_count,
+      SELECT w.*, mm.mistake_mode,
+             COALESCE(p.correct_count,0) as correct_count,
              COALESCE(p.wrong_count,0) as wrong_count, COALESCE(p.streak,0) as streak
       FROM words w
-      JOIN mistakes m ON w.id = m.word_id AND m.user_id = ?
+      JOIN (
+        SELECT word_id, mode as mistake_mode, MAX(created_at) as max_c
+        FROM mistakes WHERE user_id = ? GROUP BY word_id
+      ) mm ON w.id = mm.word_id
       LEFT JOIN progress p ON w.id = p.word_id AND p.user_id = ?
-      ORDER BY m.created_at DESC LIMIT ?`, [userId, userId, n]);
+      ORDER BY mm.max_c DESC LIMIT ?`, [userId, userId, n]);
     return res.json(mistakeWords);
   }
 

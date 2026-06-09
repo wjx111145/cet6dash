@@ -242,20 +242,21 @@
       if (D['test-input']) D['test-input'].placeholder = pDir === 'en2cn' ? '翻译上面的段落...' : 'Translate the passage into English...';
       hide(D['btn-hint']);
     } else if (word) {
-      // Word modes (en2cn, cn2en, mistakes)
+      // Word modes — 错词按原始方向，否则按当前模式
       if (D['test-sentence']) D['test-sentence'].style.display = '';
       if (D['test-question']) D['test-question'].style.fontSize = '';
       if (D['test-phonetic']) D['test-phonetic'].style.display = '';
       if (D['btn-hint']) show(D['btn-hint']);
 
-      if (mode === 'en2cn') {
-        if (D['test-mode-label']) D['test-mode-label'].textContent = 'EN → 中文';
+      var wordMode = mode === 'mistakes' && word.mistake_mode ? word.mistake_mode : mode;
+      if (wordMode === 'en2cn') {
+        if (D['test-mode-label']) D['test-mode-label'].textContent = mode === 'mistakes' ? '🔁 错词 EN → 中文' : 'EN → 中文';
         if (D['test-question']) D['test-question'].textContent = word.word;
         if (D['test-phonetic']) D['test-phonetic'].textContent = word.phonetic || '';
         if (D['test-sentence']) D['test-sentence'].textContent = word.sentence_en ? '"' + word.sentence_en + '"' : '';
         if (D['test-input']) D['test-input'].placeholder = '输入中文翻译...';
       } else {
-        if (D['test-mode-label']) D['test-mode-label'].textContent = '中文 → EN';
+        if (D['test-mode-label']) D['test-mode-label'].textContent = mode === 'mistakes' ? '🔁 错词 中文 → EN' : '中文 → EN';
         if (D['test-question']) D['test-question'].textContent = word.definition_cn;
         if (D['test-phonetic']) D['test-phonetic'].textContent = '(打英文) ' + (word.pos || '');
         if (D['test-sentence']) D['test-sentence'].textContent = word.sentence_cn ? '"' + word.sentence_cn + '"' : '';
@@ -339,7 +340,7 @@
         if (D['test-result']) { D['test-result'].textContent = '⚠️ ' + e.message; D['test-result'].className = 'test-result-area'; }
       });
     } else if (word) {
-      var answerMode = state.mode === 'sentence' && word.sentenceDir ? word.sentenceDir : state.mode;
+      var answerMode = state.mode === 'sentence' && word.sentenceDir ? word.sentenceDir : state.mode === 'mistakes' && word.mistake_mode ? word.mistake_mode : state.mode;
       api.submitAnswer(word.id, answer, answerMode).then(function(result) {
         if (result.isCorrect) { state.correctCount++; state.correctStreak++; }
         else { state.wrongCount++; state.correctStreak = 0; }
