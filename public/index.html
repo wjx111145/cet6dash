@@ -194,6 +194,10 @@
   </div>
 
   <script src="/js/api.js"></script>
+  <script>
+    // 立即显示登录界面（防止 JS 加载失败导致白屏）
+    (function(){var s=document.getElementById('auth-screen');if(s)s.classList.remove('hidden');})();
+  </script>
   <script src="/js/app.js"></script>
 </body>
 </html>

@@ -328,11 +328,6 @@
         }
         updateTestMeta();
         showResultOverlay({ isCorrect: pass, word: { word: '段落 ' + (state.currentIndex + 1), definition_cn: grade + ' — ' + result.score + '%', pos: '', phonetic: '', definition_en: '', sentence_en: '' } });
-          D['test-sentence'].style.background = '#f0fdf4';
-          D['test-sentence'].style.borderLeftColor = '#10b981';
-        }
-        updateTestMeta();
-        showResultOverlay({ isCorrect: pass, word: { word: '段落 ' + (state.currentIndex + 1), definition_cn: '得分 ' + result.score + '%', pos: '', phonetic: '', definition_en: '', sentence_en: result.reference } });
       }).catch(function(e) {
         if (D['test-input']) D['test-input'].disabled = false;
         if (D['btn-submit-answer']) D['btn-submit-answer'].disabled = false;
