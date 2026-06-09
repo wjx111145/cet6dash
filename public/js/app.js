@@ -175,7 +175,7 @@
         if (D['test-result']) { D['test-result'].textContent = '⚠️ 没有段落可测'; D['test-result'].className = 'test-result-area'; }
         return;
       }
-      passages.forEach(function(p) { p.passageDir = Math.random() < 0.5 ? 'en2cn' : 'cn2en'; });
+      passages.forEach(function(p) { p.passageDir = 'cn2en'; });
       state.passages = passages; state.words = [];
       startSession(passages.length);
       setTestQuestion();
@@ -301,12 +301,32 @@
         var pass = result.score >= 60;
         if (pass) { state.correctCount++; state.correctStreak++; }
         else { state.wrongCount++; state.correctStreak = 0; }
+
+        var grade = result.score >= 80 ? '优秀' : result.score >= 60 ? '良好' : result.score >= 40 ? '及格' : '需改进';
         if (D['test-result']) {
-          D['test-result'].textContent = (pass ? '✓ 得分 ' : '✗ 得分 ') + result.score + '%' + ' (关键' + result.keywordsFound + '/' + result.totalKeywords + ')';
+          D['test-result'].innerHTML = '<strong>' + (pass ? '✓ ' : '✗ ') + grade + '</strong> — 得分 ' + result.score + '%（关键词 ' + result.keywordsFound + '/' + result.totalKeywords + '）';
           D['test-result'].className = 'test-result-area ' + (pass ? 'correct' : result.score >= 40 ? 'partial' : 'wrong');
         }
         if (D['test-sentence']) {
-          D['test-sentence'].textContent = '参考译文: ' + result.reference;
+          var fb = '<div style="margin-top:0.5rem;padding:0.6rem;background:#f0fdf4;border-radius:6px;font-size:0.85rem;line-height:1.6">';
+          fb += '<div style="font-weight:600;margin-bottom:0.3rem">📊 评分明细</div>';
+          fb += '<div>• 关键词覆盖率：' + result.keywordsFound + '/' + result.totalKeywords + '</div>';
+          fb += '<div>• 长度匹配度：根据译文长短评估</div>';
+          if (result.keyWords && result.keyWords.length > 0) {
+            fb += '<div style="margin-top:0.3rem;font-weight:600">📝 关键词对照</div>';
+            result.keyWords.forEach(function(k) {
+              fb += '<div style="margin-left:0.5rem">• <strong>' + k.word + '</strong> → ' + k.definition + '</div>';
+            });
+          }
+          fb += '<div style="margin-top:0.4rem;padding-top:0.4rem;border-top:1px solid #d1d5db">';
+          fb += '💡 <strong>参考译文：</strong><br>' + result.reference;
+          fb += '</div></div>';
+          D['test-sentence'].innerHTML = fb;
+          D['test-sentence'].style.background = '#f8fafc';
+          D['test-sentence'].style.borderLeftColor = '#10b981';
+        }
+        updateTestMeta();
+        showResultOverlay({ isCorrect: pass, word: { word: '段落 ' + (state.currentIndex + 1), definition_cn: grade + ' — ' + result.score + '%', pos: '', phonetic: '', definition_en: '', sentence_en: '' } });
           D['test-sentence'].style.background = '#f0fdf4';
           D['test-sentence'].style.borderLeftColor = '#10b981';
         }
