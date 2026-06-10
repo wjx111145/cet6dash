@@ -90,13 +90,14 @@ app.get('/api/words/challenge', auth, (req, res) => {
     return res.json(mistakeWords);
   }
 
-  // Due review (get up to n each, deduped below)
+  // Due review (skip mastered words: streak >= 3)
   const dueWords = all(`
     SELECT w.*, COALESCE(p.correct_count,0) as correct_count,
            COALESCE(p.wrong_count,0) as wrong_count, COALESCE(p.streak,0) as streak
     FROM words w
     LEFT JOIN progress p ON w.id = p.word_id AND p.user_id = ?
     WHERE p.word_id IS NOT NULL AND p.next_review <= datetime('now','localtime')
+      AND (p.streak IS NULL OR p.streak < 3)
     ORDER BY p.next_review ASC LIMIT ?`, [userId, n]);
 
   // New words

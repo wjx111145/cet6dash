@@ -482,6 +482,7 @@
         switchView(v);
         if (v === 'dashboard') loadDashboard();
         if (v === 'stats') loadStats();
+        if (v === 'test') startTest();
       });
     });
 
