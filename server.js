@@ -3,7 +3,8 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const cors = require('cors');
 const path = require('path');
-const { initDb, getDb, all, get, run } = require('./db');
+const { initDb, getDb, all, get, run } = process.env.DATABASE_URL
+  ? require('./db-pg') : require('./db');
 const { seedAll } = require('./seed-all');
 
 const app = express();

@@ -1,7 +1,8 @@
 /**
  * 一键导入所有数据（在 server.js 启动时自动调用）
  */
-const { initDb, get, run } = require('./db');
+const { initDb, get, run } = process.env.DATABASE_URL
+  ? require('./db-pg') : require('./db');
 
 // 基础 226 词
 const baseWords = require('./seed-words.js').words || [];
